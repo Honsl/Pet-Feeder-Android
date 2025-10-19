@@ -26,6 +26,7 @@ class FeederDetailsActivity : AppCompatActivity() {
         }
         val app = applicationContext as GlobalFeeder
         feeder = app.feeder
+        Log.d("IP ADDRESS",feeder!!.ipAddress)
         schedule = feeder?.schedule?.map {it.copy() }?.toMutableList()
         findViewById<TextView>(textViewFeederName)?.text = (feeder?.name + "'s Feeder")
 
@@ -34,6 +35,8 @@ class FeederDetailsActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.buttonDeleteFeeder).setOnClickListener {
             //TODO delete the feeder
+            JsonManager(this).deleteFeeder(app.feeder!!)
+            finish()
         }
 
     }

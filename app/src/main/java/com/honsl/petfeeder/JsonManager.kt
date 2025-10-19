@@ -56,6 +56,26 @@ class JsonManager(val context: Context) {
         }
         return gson.fromJson(existingJson, itemType) ?: mutableListOf()
     }
+    fun deleteFeeder(deleteFeeder:Feeder): Boolean{
+        return try {
+            val feeders = getFeeders()
+            val index = feeders.indexOfFirst { it.name == deleteFeeder.name }
+
+            if (index != -1) {
+                feeders.remove(deleteFeeder)
+            }
+
+            val updatedJson = gson.toJson(feeders)
+            context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+                it.write(updatedJson.toByteArray())
+            }
+
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
     fun updateFeeder(updatedFeeder: Feeder): Boolean {
         return try {
             val feeders = getFeeders()
