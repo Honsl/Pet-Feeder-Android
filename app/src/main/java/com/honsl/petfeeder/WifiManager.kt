@@ -17,6 +17,8 @@ interface ApiService {
         @Query("portion") portion: String,
     ): FeederInfo
 
+    @GET("setup")
+    suspend fun setup()
     @GET("status")
     suspend fun getFeeder(): FeederLevel
 
