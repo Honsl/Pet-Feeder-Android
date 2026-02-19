@@ -34,7 +34,6 @@ class FeederDetailsActivity : AppCompatActivity() {
             //TODO set the feeder
         }
         findViewById<Button>(R.id.buttonDeleteFeeder).setOnClickListener {
-            //TODO delete the feeder
             JsonManager(this).deleteFeeder(app.feeder!!)
             finish()
         }
