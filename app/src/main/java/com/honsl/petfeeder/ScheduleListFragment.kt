@@ -50,7 +50,7 @@ class ScheduleListFragment : Fragment() {
         recyclerView.adapter = scheduleAdapter
 
         view.findViewById<ImageButton>(R.id.imageButtonAddSchedule).setOnClickListener {
-            val newSchedule = Schedule(UUID.randomUUID(), "left", 1, "12:30")
+            val newSchedule = Schedule(UUID.randomUUID(), "left", 1, "12:30 PM")
             val app = requireActivity().applicationContext as GlobalFeeder
             val feeder = app.feeder
             feeder?.schedule?.add(newSchedule)
