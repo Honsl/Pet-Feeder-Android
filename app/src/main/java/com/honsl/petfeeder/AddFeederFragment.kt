@@ -26,7 +26,9 @@ import android.widget.ImageButton
 import androidx.annotation.RequiresPermission
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import com.honsl.petfeeder.Schedule
+import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.collections.forEach
 
@@ -86,10 +88,25 @@ class AddFeederFragment : Fragment() {
 
             }
         }
+
+        override fun onDescriptorWrite(
+            gatt: BluetoothGatt?,
+            descriptor: BluetoothGattDescriptor?,
+            status: Int
+        ) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d("BLE_GATT", "Notifications enabled successfully")
+            } else {
+                Log.e("BLE_GATT", "Failed to enable notifications, status=$status")
+            }
+
+            super.onDescriptorWrite(gatt, descriptor, status)
+        }
         override fun onCharacteristicChanged(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic
         ) {
+            Log.d("BLE_GATT","recvied information")
             val responseData = characteristic.value
             val responseText = responseData.toString(Charsets.UTF_8)
 
@@ -106,6 +123,11 @@ class AddFeederFragment : Fragment() {
 
                 if (result) {
                     Log.d("JSON_UPDATE", "Feeder saved successfully: $feeder")
+                    val wifi  = WifiManager(requireContext(),"http://"+feeder.ipAddress)
+                    lifecycleScope.launch {
+                        wifi.apiService.setup()
+                    }
+
                 } else {
                     Log.e("JSON_UPDATE", "Failed to save feeder data")
                 }
@@ -129,9 +151,13 @@ class AddFeederFragment : Fragment() {
                 gatt.setCharacteristicNotification(characteristic, true)
 
 // Set up the descriptor (CCCD - Client Characteristic Configuration Descriptor)
-                val descriptor = characteristic?.getDescriptor(UUID.fromString("00002902-0000-1000-8000-00805f9b34fb"))
-                descriptor?.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-                gatt.writeDescriptor(descriptor)
+                val cccdUuid = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
+                val descriptor: BluetoothGattDescriptor? = characteristic?.getDescriptor(cccdUuid)
+
+                val value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                if (descriptor != null) {
+                    gatt.writeDescriptor(descriptor, value)
+                }
             } else {
                 Log.e("BLE_GATT", "Service discovery failed with status $status")
             }
