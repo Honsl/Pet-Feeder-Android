@@ -72,9 +72,12 @@ class FoodLevelFragment : Fragment() {
         chart.xAxis.setDrawAxisLine(false)
         chart.axisLeft.setDrawAxisLine(false)
         chart.axisRight.setDrawAxisLine(false)
-        
-        val entries = listOf<BarEntry>(BarEntry(0f,10f))
-        val entries2 = listOf<BarEntry>(BarEntry(1f,50f))
+
+        val app = requireActivity().application as GlobalFeeder
+        val feeder = app.feeder
+
+        val entries = listOf<BarEntry>(BarEntry(0f, feeder?.levelLeft ?: 100.0f))
+        val entries2 = listOf<BarEntry>(BarEntry(1f,feeder?.levelLeft ?: 100.0f))
         val dataSet = BarDataSet(entries,"Left")
         val dataSet2 = BarDataSet(entries2,"Right")
         dataSet2.setColor(ColorTemplate.rgb("#8191DC"))
