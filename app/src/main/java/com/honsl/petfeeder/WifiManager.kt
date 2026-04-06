@@ -8,8 +8,8 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-data class FeederInfo(val foodLevel1: String, val foodLevel2: String)
-data class FeederLevel(val leftFeeder: Float, val rightFeeder: Float)
+//data class FeederInfo(val foodLevel1: String, val foodLevel2: String)
+data class FeederInfo(val name:String, val leftFeeder: Float, val rightFeeder: Float)
 
 interface ApiService {
     @GET("feed")
@@ -20,7 +20,7 @@ interface ApiService {
     @GET("setup")
     suspend fun setup()
     @GET("status")
-    suspend fun getFeeder(): FeederLevel
+    suspend fun getFeeder(): FeederInfo
 
     @POST("setSchedule")
     suspend fun setSchedule(
